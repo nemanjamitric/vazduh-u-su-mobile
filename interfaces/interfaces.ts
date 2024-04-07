@@ -1,3 +1,5 @@
+import { AdditionalSensorData } from "../types/__generated__/graphql";
+
 export interface DataObject {
     __v: number;
     _id: string;
@@ -88,3 +90,6 @@ export interface DataObject {
     utc_offset_seconds: number;
   }
   
+  export interface MapDataQueryProps {
+    getLatestData?: AdditionalSensorData[];
+  }

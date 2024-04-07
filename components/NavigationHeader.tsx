@@ -21,7 +21,7 @@ const NavigationHeader: FC<NavigationHeaderProps> = props => {
       }}>
       <Logo width={120} height={40} />
       {!props.hideHome && (
-        <Link href={'/profile'}>
+        <Link href={'/selectLocation'}>
           <IconButton icon="account" size={35} />
         </Link>
       )}

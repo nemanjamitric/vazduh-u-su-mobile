@@ -4,6 +4,8 @@ import { Avatar } from 'react-native-paper';
 
 import useTheme from '../../hooks/useTheme';
 import NavigationHeader from '../../components/NavigationHeader';
+import SmallLogo from '../../assets/whiteLogo.svg';
+import { View } from 'react-native';
 
 const listOfHiddenButtonScreens: string[] = ['profile', 'selectLocation', 'device/[deviceName]'];
 const listOfHiddenProfileButtonScreens: string[] = ['profile', 'selectLocation'];
@@ -39,15 +41,18 @@ const TabNav = (): JSX.Element => {
           ),
         }}
       />
-      {/* <Tabs.Screen
+      <Tabs.Screen
         name="dashboard"
         options={{
           tabBarIcon: ({ focused }) => (
-            <Avatar.Icon style={{ marginBottom: 18 }} size={focused ? 60 : 46} icon={'chart-donut'} />
+            <View style={{ marginBottom: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: focused ? 60 : 48, height: focused ? 60 : 48, backgroundColor: colors.primary, borderRadius: 80 }}>
+              <SmallLogo height={focused ? 36 : 28} />
+            </View>
           ),
         }}
       />
-      <Tabs.Screen
+      <Tabs.Screen name="selectLocation" />
+      {/* <Tabs.Screen
         name="weather"
         options={{
           tabBarIcon: ({ focused }) => (
@@ -56,7 +61,6 @@ const TabNav = (): JSX.Element => {
         }}
       />
       <Tabs.Screen name="profile" />
-      <Tabs.Screen name="selectLocation" />
       <Tabs.Screen name="device/[deviceName]" /> */}
     </Tabs>
   );

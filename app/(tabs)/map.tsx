@@ -3,11 +3,14 @@ import React, { useMemo, useState } from "react";
 import { SegmentedButtons, Text, useTheme } from "react-native-paper";
 import QueryResult from "../../components/QueryResult";
 import MapView, { Circle, Marker, Region } from "react-native-maps";
-import { ColorSchemeName, Dimensions, StyleSheet, View, useColorScheme } from "react-native";
+import { ColorSchemeName, Dimensions, FlatList, StyleSheet, View, useColorScheme } from "react-native";
 import { BlurView } from "expo-blur";
 import * as Location from 'expo-location';
 import { getClosestKey } from "../../functions/commonFunctions";
 import { qualityColorVals, qualityColorVals80 } from "../../functions/meteoTransform";
+import Screen from "../../components/Screen";
+import AQICard from "../../components/AQICard";
+import { MapDataQueryProps } from "../../interfaces/interfaces";
 
 const MAP_DATA = gql`
 query GetLatestData {
@@ -76,17 +79,39 @@ const mapCustomStyle = [
     { featureType: 'water', elementType: 'labels.text.stroke', stylers: [{ color: '#17263c' }] },
   ];
 
+  const mapStyle=
+  [
+    {
+      "featureType": "poi",
+      "elementType": "labels.text.fill",
+      "stylers": [
+        {
+          "visibility": "off"
+        }
+      ]
+    },
+    {
+      "featureType": "poi",
+      "elementType": "labels.text.stroke",
+      "stylers": [
+        {
+          "visibility": "off"
+        }
+      ]
+    }
+  ]
+
   const legend = [
     { text: 'Dobar', color: '#9CD84E' },
-    { text: 'Umeren', color: '#FACF39' },
-    { text: 'Nezdrav za osetljive grupe', color: '#F99049' },
-    { text: 'Nezdrav', color: '#F65E5F' },
-    { text: 'Vrlo Nezdrav', color: '#A070B6' },
-    { text: 'Opasan', color: '#A06A7B' },
+    { text: 'Prihvatljiv', color: '#FACF39' },
+    { text: 'Srednji', color: '#F99049' },
+    { text: 'Loš', color: '#F65E5F' },
+    { text: 'Veoma loš', color: '#A070B6' },
+    { text: 'Izuzetno loš', color: '#A06A7B' },
   ];
 
 const Map = () => {
-    const {loading, error, data} = useQuery(MAP_DATA);
+    const {loading, error, data} = useQuery<MapDataQueryProps>(MAP_DATA);
     const [dataViewSelected, setDataViewSelected] = useState<boolean>(false);
     const [mapRegion, setMapRegion] = useState<Region | undefined>({
       latitude: 46.099435,
@@ -99,17 +124,18 @@ const Map = () => {
     const { colors } = useTheme();
 
     const renderDataView = useMemo(() => {
+        if (!data?.getLatestData) {
+          return null
+        }
         return (
-            <View />
-        //   <Screen withoutScrollView>
-        //     <LoadingAnimation loading={loading} />
-        //     <FlatList
-        //       contentContainerStyle={{ paddingTop: 70 }}
-        //       data={dataPoints}
-        //       renderItem={({ item }) => <AQICard airData={item} />}
-        //       keyExtractor={item => item._id}
-        //     />
-        //   </Screen>
+          <Screen withoutScrollView>
+            <FlatList
+              contentContainerStyle={{ paddingTop: 70 }}
+              data={data.getLatestData}
+              renderItem={({ item }) => <AQICard airData={item} />}
+              keyExtractor={item => item._id}
+            />
+          </Screen>
         );
       }, [loading, data]);
 
@@ -146,7 +172,7 @@ const Map = () => {
                 longitudeDelta: 0.0421,
               }}
               showsPointsOfInterest={false}
-              customMapStyle={colorScheme === 'dark' && mapCustomStyle}
+              customMapStyle={colorScheme === 'dark' ? {...mapStyle, ...mapCustomStyle} : mapStyle}
               region={mapRegion}
               provider="google">
               {location && (
@@ -161,36 +187,29 @@ const Map = () => {
               )}
               {data?.getLatestData?.map((point) => {
                 return (
+                  <View key={point._id}>
                     <Circle
-                      key={point._id}
+                      key={'smallCircle' + point._id}
                       center={{
                         latitude: Number(point.latitude),
                         longitude: Number(point.longitude),
                       }}
-                      radius={300}
+                      radius={200}
                       strokeWidth={0}
-                      fillColor={getClosestKey(qualityColorVals80, point.pm25_aqius)}
+                      fillColor={getClosestKey(qualityColorVals80, Number(point.pm25_conc))}
                     />
-                )
-              })}
-              {data?.getLatestData?.map((point) => {
-                return (
-                  <Circle
-                    key={point._id}
-                    center={{
-                      latitude: Number(point.latitude),
-                      longitude: Number(point.longitude),
-                    }}
-                    radius={500}
-                    strokeWidth={0}
-                    fillColor={getClosestKey(qualityColorVals, point.pm25_aqius)}
-                  />
-                );
-              })}
-              {data?.getLatestData?.map((point, index) => {
-                return(
+                    <Circle
+                      key={'largeCircle' + point._id}
+                      center={{
+                        latitude: Number(point.latitude),
+                        longitude: Number(point.longitude),
+                      }}
+                      radius={500}
+                      strokeWidth={0}
+                      fillColor={getClosestKey(qualityColorVals, Number(point.pm25_conc))}
+                    />
                     <Marker
-                        key={point._id}
+                        key={'marker' + point._id}
                         coordinate={{
                             latitude: Number(point.latitude),
                             longitude: Number(point.longitude),
@@ -198,9 +217,10 @@ const Map = () => {
                         anchor={{ x: 0.5, y: 0.5 }}
                     >
                         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                            <Text>{Math.round(point.pm25_conc)}</Text>
+                            <Text>{Math.round(Number(point.pm25_conc))}</Text>
                         </View>
                     </Marker>
+                  </View>
                 )
               })}
             </MapView>

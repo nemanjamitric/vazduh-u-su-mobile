@@ -24,7 +24,7 @@ export const getLowestKey = (map, givenValue = 0) => {
   return result;
 };
 
-export const getClosestKey = <K, V>(map: Map<K, V>, givenValue: number = 0): V | null => {
+export const getClosestKey = <K, V>(map: Map<string | number, V>, givenValue: number = 0): V | null => {
   let result: V | null = null;
   const differenceArray: number[] = [];
   for (const [key] of map.entries()) {

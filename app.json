@@ -2,6 +2,7 @@
   "expo": {
     "name": "vazduh-u-su-mobile",
     "slug": "vazduh-u-su-mobile",
+    "scheme": "vazduh-u-su-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
