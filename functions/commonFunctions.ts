@@ -1,16 +1,5 @@
-import { DataObject, District } from '../interfaces/interfaces';
-
-export const filterUniqueObjectsByName = (data: DataObject[]): DataObject[] => {
-  const uniqueObjects: { [key: string]: DataObject } = {};
-
-  for (const obj of data) {
-    if (!(obj.name in uniqueObjects) || obj.time_stamp > uniqueObjects[obj.name].time_stamp) {
-      uniqueObjects[obj.name] = obj;
-    }
-  }
-
-  return Object.values(uniqueObjects);
-};
+import * as Location from 'expo-location';
+import { AdditionalSensorData } from '../types/__generated__/graphql';
 
 export const getLowestKey = (map, givenValue = 0) => {
   let result = null;
@@ -61,13 +50,13 @@ export const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2
   return earthRadius * c;
 };
 
-export const findClosestDistrict = (data: District, dataArray: DataObject[]): DataObject | null => {
-  let closestData: DataObject | null = null;
+export const findClosestLocation = (data: Location.LocationObject, dataArray: AdditionalSensorData[]): AdditionalSensorData | null => {
+  let closestData: AdditionalSensorData | null = null;
   let closestDistance = Infinity;
 
   for (const dataObj of dataArray) {
-    const lat1 = data.latitude;
-    const lon1 = data.longitude;
+    const lat1 = data.coords.latitude;
+    const lon1 = data.coords.longitude;
     const lat2 = parseFloat(dataObj.latitude);
     const lon2 = parseFloat(dataObj.longitude);
 

@@ -13,8 +13,9 @@ interface Props {
 const AQICard: React.FC<Props> = ({ airData }) => {
   const router = useRouter();
   const handleNavigation = useCallback(() => {
-    router.replace(`device/${airData.name}`);
+    // router.replace(`device/${airData.name}`);
   }, [airData?.name, router]);
+  
 
   const renderIcon = useMemo(() => {
     if (!airData) return null;
@@ -27,10 +28,10 @@ const AQICard: React.FC<Props> = ({ airData }) => {
               left={props => <Avatar.Icon {...props} icon="map-marker-star" />}
             />
             <Card.Content>
-              <Paragraph>Vazdušni pritisak: {Math.round(Number(airData.pressure) / 100)} mbar</Paragraph>
+              <Paragraph>Vazdušni pritisak: {Number(airData.pressure)} mbar</Paragraph>
               <Paragraph>Vlažnost vazduha: {airData.humidity}%</Paragraph>
               <Paragraph>Temperatura: {airData.temperature}°C</Paragraph>
-              <Paragraph>AQI ocena (indeks kvaliteta vazduha): {airData.pm25_aqius}</Paragraph>
+              <Paragraph>AQI ocena (indeks kvaliteta vazduha): {airData.aqius}</Paragraph>
               <Paragraph>Koncentracija čestica (PM2.5): {airData.pm25_conc} µg/m³</Paragraph>
               <Paragraph>Vreme uzorkovanja: {moment(airData.time).format('h:mm:ss D.M.YYYY.')}</Paragraph>
             </Card.Content>

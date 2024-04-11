@@ -32,14 +32,14 @@ const AirQualityCard: React.FC<Props> = ({ airData }) => {
           }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width - 170 }}>
             <Paragraph style={{ fontSize: 20, marginTop: 10 }}>
-              Kvalitet vazduha: {getClosestKey(qualityText, Number(airData?.pm25_conc))}{' '}
-              {getClosestKey(qualitySmiley, Number(airData?.pm25_conc))}
+              Kvalitet vazduha: {getClosestKey(qualityText, Number(airData?.aqius))}{' '}
+              {getClosestKey(qualitySmiley, Number(airData?.aqius))}
             </Paragraph>
           </View>
           <View
             style={{
               width: 120,
-              backgroundColor: getClosestKey(qualityColorVals80, Number(airData?.pm25_conc)),
+              backgroundColor: getClosestKey(qualityColorVals80, Number(airData?.aqius)),
               height: 120,
               borderRadius: 10,
               overflow: 'hidden',
@@ -47,7 +47,7 @@ const AirQualityCard: React.FC<Props> = ({ airData }) => {
               alignItems: 'center',
             }}>
             <Text style={{ fontSize: 16 }}>US AQI</Text>
-            <Text style={{ fontSize: 60 }}>{airData?.pm25_conc}</Text>
+            <Text style={{ fontSize: 60 }}>{airData?.aqius}</Text>
           </View>
         </Card.Content>
       </Card>

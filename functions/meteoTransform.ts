@@ -15,11 +15,11 @@ export const deviceNameParams = new Map([
 
 export const qualityText = new Map([
   [0, 'Dobar'],
-  [51, 'Umeren'],
-  [101, 'Nezdrav za os. grupe'],
-  [151, 'Nezdrav'],
-  [201, 'Vrlo Nezdrav'],
-  [301, 'Opasan'],
+  [51, 'Prihvatljiv'],
+  [101, 'Srednji'],
+  [151, 'Loš'],
+  [201, 'Veoma Loš'],
+  [301, 'Izuzetno Loš'],
 ]);
 
 export const qualitySmiley = new Map([

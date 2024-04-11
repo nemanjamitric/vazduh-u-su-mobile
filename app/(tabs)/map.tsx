@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { SegmentedButtons, Text, useTheme } from "react-native-paper";
 import QueryResult from "../../components/QueryResult";
 import MapView, { Circle, Marker, Region } from "react-native-maps";
@@ -123,6 +123,21 @@ const Map = () => {
     const colorScheme: ColorSchemeName = useColorScheme();
     const { colors } = useTheme();
 
+    
+    useEffect(() => {
+      (async () => {
+        
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          console.error('Permission to access location was denied');
+          return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation(location);
+      })();
+    }, []);
+
     const renderDataView = useMemo(() => {
         if (!data?.getLatestData) {
           return null
@@ -177,13 +192,15 @@ const Map = () => {
               provider="google">
               {location && (
                 <Marker
-                  coordinate={{
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
-                  }}
-                  title="Vaša lokacija"
-                  pinColor={colors.primary}
-                />
+                    key={'marker'}
+                    coordinate={{
+                      latitude: location.coords.latitude,
+                      longitude: location.coords.longitude,
+                    }}
+                    anchor={{ x: 0.25, y: 0.25 }}
+                >
+                    <View style={[styles.myLocationMarker, {backgroundColor: colors.primary}]}/>
+                </Marker>
               )}
               {data?.getLatestData?.map((point) => {
                 return (
@@ -301,6 +318,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 9998,
   },
+  myLocationMarker: {width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: "#ffffff"}
 });
 
 export default Map
